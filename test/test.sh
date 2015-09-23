@@ -56,5 +56,5 @@ ansiblecfg
 setup_ssh
 siteyml site.yml "$ROLE_NAME"
 
-pip install ansible
+type ansible || pip install ansible
 ansible-playbook --private-key=vagrant -i inventory.ini -u root site.yml
