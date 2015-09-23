@@ -38,7 +38,7 @@ setup_ssh() {
 }
 
 siteyml() {
-	echo -e "
+	echo -e "---
 
 - hosts: all
   roles:
