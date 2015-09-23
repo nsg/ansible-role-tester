@@ -38,13 +38,14 @@ setup_ssh() {
 }
 
 siteyml() {
-	echo -e "---
+	cat <<EOT > $1
+---
 
 - hosts: all
   roles:
-    - $ROLE_NAME
+    - $2
 
-	" > site.yml
+EOT
 }
 
 for image in $TEST_AT_IMAGES; do
@@ -53,7 +54,7 @@ done
 
 ansiblecfg
 setup_ssh
-siteyml
+siteyml site.yml "$ROLE_NAME"
 
 pip install ansible
 ansible-playbook --private-key=vagrant -i inventory.ini -u root site.yml
