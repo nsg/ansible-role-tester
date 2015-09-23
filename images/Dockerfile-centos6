@@ -1,0 +1,7 @@
+FROM centos:6
+MAINTAINER Stefan Berggren <nsg@nsg.cc>
+RUN yum -y install openssh-server curl
+RUN mkdir -p /root/.ssh && chmod 700 /root/.ssh
+RUN curl -L https://raw.githubusercontent.com/mitchellh/vagrant/master/keys/vagrant.pub > /root/.ssh/authorized_keys \
+	&& chmod 600 /root/.ssh/authorized_keys
+CMD /usr/sbin/sshd -p 2222 -D
