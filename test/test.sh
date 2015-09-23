@@ -1,6 +1,12 @@
 #!/bin/bash -e
 
-TEST_AT_IMAGES=$1
+# Call it like this
+# ./test.sh myrole "ubuntu:latest debian:7"
+# or maybe like this
+# ./test.sh "{ role: myrole, var: 1 }" "centos debian:7"
+
+ROLE_NAME=$1
+TEST_AT_IMAGES=$2
 
 message() {
 	echo -e $@
@@ -31,9 +37,20 @@ setup_ssh() {
 	chmod 600 vagrant
 }
 
+siteyml() {
+	echo -e "
+
+- hosts: all
+  roles:
+    - $ROLE_NAME
+
+	" > site.yml
+}
+
 for image in $TEST_AT_IMAGES; do
 	boot $image
 done
 
 ansiblecfg
 setup_ssh
+siteyml
