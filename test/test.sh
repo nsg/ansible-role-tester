@@ -7,6 +7,7 @@
 
 ROLE_NAME=$1
 TEST_AT_IMAGES=$2
+ROLE_PARAMS=$3
 
 message() {
 	echo -e $@
@@ -38,6 +39,7 @@ setup_ssh() {
 }
 
 siteyml() {
+	if [ -z $3 ]; then
 	cat <<EOT > $1
 ---
 
@@ -46,6 +48,16 @@ siteyml() {
     - $2
 
 EOT
+	else
+	cat <<EOT > $1
+---
+
+- hosts: all
+  roles:
+    - { role: $2, $3 }
+
+EOT
+	fi
 }
 
 for image in $TEST_AT_IMAGES; do
@@ -54,7 +66,7 @@ done
 
 ansiblecfg
 setup_ssh
-siteyml site.yml "$ROLE_NAME"
+siteyml site.yml "$ROLE_NAME" $ROLE_PARAMS
 
 type ansible || pip install ansible
 ansible-playbook --private-key=vagrant -i inventory.ini -u root site.yml
