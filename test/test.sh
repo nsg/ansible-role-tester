@@ -3,7 +3,7 @@
 # Call it like this
 # ./test.sh myrole "ubuntu:latest debian:7"
 # or maybe like this
-# ./test.sh "{ role: myrole, var: 1 }" "centos debian:7"
+# ./test.sh myrole "centos debian:7" "myrole_var: 1, var2: True"
 
 ROLE_NAME=$1
 TEST_AT_IMAGES=$2
