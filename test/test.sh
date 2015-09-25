@@ -6,8 +6,8 @@
 # ./test.sh "centos debian:7" "myrole_var: 1, var2: True"
 
 ROLE_NAME="$(basename $(pwd))"
-TEST_AT_IMAGES=$2
-ROLE_PARAMS=$3
+TEST_AT_IMAGES=$1
+ROLE_PARAMS=$2
 
 message() {
 	echo -e $@
