@@ -7,7 +7,7 @@
 
 ROLE_NAME="$(basename $(pwd))"
 TEST_AT_IMAGES=$1
-ROLE_PARAMS=$2
+ROLE_PARAMS="$2"
 
 message() {
 	echo -e $@
@@ -66,7 +66,7 @@ done
 
 ansiblecfg
 setup_ssh
-siteyml site.yml "$ROLE_NAME" $ROLE_PARAMS
+siteyml site.yml "$ROLE_NAME" "$ROLE_PARAMS"
 
 type ansible || pip install ansible
 ansible-playbook --private-key=vagrant -i inventory.ini -u root site.yml
