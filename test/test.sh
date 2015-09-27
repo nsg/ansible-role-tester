@@ -52,18 +52,46 @@ if [ ! -f tests/main.yml ]; then
 	exit 1
 fi
 
+if [ $VERBOSE_TESTS ]; then
+	EXTRA_PARAMS=" -vvv"
+fi
+
 message "Check syntax"
-ansible-playbook -i inventory.ini tests/main.yml --syntax-check
+ansible-playbook \
+	-i inventory.ini \
+	--syntax-check \
+	$EXTRA_PARAMS \
+	tests/main.yml
 
 message "Run pre steps | run pre.yml"
-[ -f tests/pre.yml ] && ansible-playbook --private-key=vagrant -i inventory.ini -u root tests/pre.yml
+[ -f tests/pre.yml ] && ansible-playbook \
+	--private-key=vagrant \
+	-i inventory.ini \
+	-u root \
+	$EXTRA_PARAMS \
+	tests/pre.yml
 
 message "Run the tests | run main.yml"
-ansible-playbook --private-key=vagrant -i inventory.ini -u root tests/main.yml
+ansible-playbook \
+	--private-key=vagrant \
+	-i inventory.ini \
+	-u root \
+	$EXTRA_PARAMS \
+	tests/main.yml
 
 message "Test for role idempotence | run main.yml"
-ansible-playbook --private-key=vagrant -i inventory.ini -u root tests/main.yml | tee out.log
+ansible-playbook \
+	--private-key=vagrant \
+	-i inventory.ini \
+	-u root \
+	$EXTRA_PARAMS \
+	tests/main.yml | tee out.log
 grep 'changed=0.*failed=0' out.log
 
 message "Run post steps | run post.yml"
-[ -f tests/post.yml ] && ansible-playbook --private-key=vagrant -i inventory.ini -u root tests/post.yml
+[ -f tests/post.yml ] && ansible-playbook \
+	--private-key=vagrant \
+	-i inventory.ini \
+	-u root \
+	$EXTRA_PARAMS \
+	tests/post.yml
