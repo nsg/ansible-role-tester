@@ -2,15 +2,13 @@
 
 # Call it like this
 # ./test.sh "ubuntu:latest debian:7"
-# or maybe like this
-# ./test.sh "centos debian:7" "myrole_var: 1, var2: True"
 
-ROLE_NAME="$(basename $(pwd))"
-TEST_AT_IMAGES=$1
-ROLE_PARAMS="$2"
+TEST_AT_IMAGES="$1"
 
 message() {
-	echo -e $@
+	echo -e "\n###"
+	echo -e "# $@"
+	echo -e "###\n"
 }
 
 next_port() {
@@ -26,7 +24,7 @@ boot() {
 	local image=$1
 	next_port
 	docker run -dp 127.0.0.1:$(port):2222 nsgb/ansible-test-$image
-	echo -e ${image%%:*} ansible_ssh_port=$(port) ansible_ssh_host=127.0.0.1 >> inventory.ini
+	echo -e ${image%%:*}_${image##*:} ansible_ssh_port=$(port) ansible_ssh_host=127.0.0.1 >> inventory.ini
 }
 
 ansiblecfg() {
@@ -34,39 +32,38 @@ ansiblecfg() {
 }
 
 setup_ssh() {
-	wget https://raw.githubusercontent.com/mitchellh/vagrant/master/keys/vagrant
+	wget -c https://raw.githubusercontent.com/mitchellh/vagrant/master/keys/vagrant
 	chmod 600 vagrant
 }
 
-siteyml() {
-	if [ -z $3 ]; then
-	cat <<EOT > $1
----
-
-- hosts: all
-  roles:
-    - $2
-
-EOT
-	else
-	cat <<EOT > $1
----
-
-- hosts: all
-  roles:
-    - { role: $2, $3 }
-
-EOT
-	fi
-}
-
+rm inventory.ini
 for image in $TEST_AT_IMAGES; do
 	boot $image
 done
 
+rm ansible.cfg
 ansiblecfg
 setup_ssh
-siteyml site.yml "$ROLE_NAME" "$ROLE_PARAMS"
 
 type ansible || pip install ansible
-ansible-playbook --private-key=vagrant -i inventory.ini -u root site.yml
+
+if [ ! -f tests/main.yml ]; then
+	echo "Failed, no tests/main.yml found"
+	exit 1
+fi
+
+message "Prepare the system | run prep.yml"
+[ -f tests/prep.yml ] && ansible-playbook --private-key=vagrant -i inventory.ini -u root tests/prep.yml
+
+message "Run pre steps | run pre.yml"
+[ -f tests/pre.yml ] && ansible-playbook --private-key=vagrant -i inventory.ini -u root tests/pre.yml
+
+message "Run the tests | run main.yml"
+ansible-playbook --private-key=vagrant -i inventory.ini -u root tests/main.yml
+
+message "Test for role idempotence | run main.yml"
+ansible-playbook --private-key=vagrant -i inventory.ini -u root tests/main.yml \
+  | grep -q 'changed=0.*failed=0'
+
+message "Run post steps | run post.yml"
+[ -f tests/post.yml ] && ansible-playbook --private-key=vagrant -i inventory.ini -u root tests/post.yml
