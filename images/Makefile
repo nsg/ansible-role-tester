@@ -8,11 +8,12 @@ build:
 	docker build -t ${PREFIX}-debian:7 -f Dockerfile-debian7 .
 	docker build -t ${PREFIX}-debian:8 -f Dockerfile-debian8 .
 	docker build -t ${PREFIX}-centos:6 -f Dockerfile-centos6 .
+	docker build -t ${PREFIX}-centos:7 -f Dockerfile-centos7 .
 
 tag:
 	docker tag -f ${PREFIX}-ubuntu:1404 nsgb/ansible-test-ubuntu:latest
 	docker tag -f ${PREFIX}-debian:8 nsgb/ansible-test-debian:latest
-	docker tag -f ${PREFIX}-centos:6 nsgb/ansible-test-centos:latest
+	docker tag -f ${PREFIX}-centos:7 nsgb/ansible-test-centos:latest
 
 push:
 	docker push ${PREFIX}-ubuntu:1404
@@ -21,4 +22,5 @@ push:
 	docker push ${PREFIX}-debian:8
 	docker push ${PREFIX}-debian:latest
 	docker push ${PREFIX}-centos:6
+	docker push ${PREFIX}-centos:7
 	docker push ${PREFIX}-centos:latest

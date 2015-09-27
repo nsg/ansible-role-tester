@@ -24,7 +24,7 @@ boot() {
 	local image=$1
 	next_port
 
-	if [[ $image == "debian:8" ]]; then
+	if [[ $image == "debian:8" ]] || [[ $image == "centos:7" ]]; then
 		docker run \
 			-dp 127.0.0.1:$(port):2222 \
 			--privileged \
