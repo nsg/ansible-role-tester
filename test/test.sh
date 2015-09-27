@@ -52,6 +52,9 @@ if [ ! -f tests/main.yml ]; then
 	exit 1
 fi
 
+message "Check syntax"
+ansible-playbook -i inventory.ini tests/main.yml --syntax-check
+
 message "Run pre steps | run pre.yml"
 [ -f tests/pre.yml ] && ansible-playbook --private-key=vagrant -i inventory.ini -u root tests/pre.yml
 
