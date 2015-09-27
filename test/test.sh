@@ -36,12 +36,12 @@ setup_ssh() {
 	chmod 600 vagrant
 }
 
-rm inventory.ini
+[ -f inventory.ini ] && rm inventory.ini
 for image in $TEST_AT_IMAGES; do
 	boot $image
 done
 
-rm ansible.cfg
+[ -f ansible.cfg ] && rm ansible.cfg
 ansiblecfg
 setup_ssh
 
