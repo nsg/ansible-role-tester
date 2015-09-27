@@ -52,9 +52,6 @@ if [ ! -f tests/main.yml ]; then
 	exit 1
 fi
 
-message "Prepare the system | run prep.yml"
-[ -f tests/prep.yml ] && ansible-playbook --private-key=vagrant -i inventory.ini -u root tests/prep.yml
-
 message "Run pre steps | run pre.yml"
 [ -f tests/pre.yml ] && ansible-playbook --private-key=vagrant -i inventory.ini -u root tests/pre.yml
 
