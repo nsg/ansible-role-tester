@@ -8,7 +8,7 @@ ENV DEBIAN_FRONTEND noninteractive
 # Install packages
 RUN apt-get -y update \
 	&& apt-get -y install \
-	ssh curl python sudo
+	curl python sudo
 
 # Misc settings
 RUN mkdir /var/run/sshd && mkdir -p /root/.ssh && chmod 700 /root/.ssh
@@ -33,9 +33,10 @@ RUN cd /lib/systemd/system/sysinit.target.wants/; \
 	rm -f /lib/systemd/system/plymouth*; \
 	rm -f /lib/systemd/system/systemd-update-utmp*;
 VOLUME [ "/sys/fs/cgroup" ]
+
+RUN apt-get -y install ssh
 RUN systemctl set-default multi-user.target
 
-CMD /lib/systemd/systemd --system &; \
-	/usr/sbin/sshd -p 2222 -D
+CMD /lib/systemd/systemd --system
 
 #docker run -it --privileged -v /sys/fs/cgroup:/sys/fs/cgroup:ro --env=container=docker ...
