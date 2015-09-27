@@ -2,6 +2,7 @@ FROM ubuntu:trusty
 MAINTAINER Stefan Berggren <nsg@nsg.cc>
 RUN apt -y install ssh curl && mkdir /var/run/sshd
 RUN mkdir -p /root/.ssh && chmod 700 /root/.ssh
+RUN sed -i '/Defaults.*requiretty/d' /etc/sudoers
 RUN curl -L https://raw.githubusercontent.com/mitchellh/vagrant/master/keys/vagrant.pub > /root/.ssh/authorized_keys \
 	&& chmod 600 /root/.ssh/authorized_keys
 CMD /usr/sbin/sshd -p 2222 -D
