@@ -59,8 +59,8 @@ message "Run the tests | run main.yml"
 ansible-playbook --private-key=vagrant -i inventory.ini -u root tests/main.yml
 
 message "Test for role idempotence | run main.yml"
-ansible-playbook --private-key=vagrant -i inventory.ini -u root tests/main.yml \
-  | grep -q 'changed=0.*failed=0'
+ansible-playbook --private-key=vagrant -i inventory.ini -u root tests/main.yml | tee out.log
+grep 'changed=0.*failed=0' out.log
 
 message "Run post steps | run post.yml"
 [ -f tests/post.yml ] && ansible-playbook --private-key=vagrant -i inventory.ini -u root tests/post.yml
