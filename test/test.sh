@@ -23,7 +23,12 @@ port() {
 boot() {
 	local image=$1
 	next_port
-	docker run -dp 127.0.0.1:$(port):2222 nsgb/ansible-test-$image
+	docker run \
+		-dp 127.0.0.1:$(port):2222 \
+		--privileged \
+		-v /sys/fs/cgroup:/sys/fs/cgroup:ro \
+		--env=container=docker \
+		nsgb/ansible-test-$image
 	echo -e ${image%%:*}_${image##*:} ansible_ssh_port=$(port) ansible_ssh_host=127.0.0.1 >> inventory.ini
 }
 
