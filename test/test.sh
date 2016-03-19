@@ -42,7 +42,7 @@ boot() {
 }
 
 ansiblecfg() {
-	echo -e "[defaults]\nroles_path = ../" > ansible.cfg
+	echo -e "[defaults]\nroles_path = ../\n[ssh_connection]\nscp_if_ssh=True" > ansible.cfg
 }
 
 setup_ssh() {
