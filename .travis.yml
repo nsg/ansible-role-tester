@@ -8,7 +8,7 @@ env:
     - ANSIBLE_HOST_KEY_CHECKING=False
 
 install:
-  - apt-get install -y lxc
+  - sudo apt-get install -y lxc
 
 script:
   - true
