@@ -1,0 +1,14 @@
+---
+
+sudo: required
+dist: trusty
+
+env:
+  global:
+    - ANSIBLE_HOST_KEY_CHECKING=False
+
+install:
+  - apt-get install -y lxc
+
+script:
+  - true
