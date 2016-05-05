@@ -5,7 +5,7 @@ dist: trusty
 
 env:
   global:
-    - ANSIBLE_HOST_KEY_CHECKING=False
+    - DEBIAN_FRONTEND=noninteractive
 
 install:
   - sudo apt-get install -y lxc
