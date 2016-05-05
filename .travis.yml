@@ -3,4 +3,4 @@
 sudo: required
 dist: trusty
 script:
-  - ./test/lxc_test.sh
+  - ./test/lxc_test.sh 2 debian
