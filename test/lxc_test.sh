@@ -6,6 +6,7 @@ install() {
 		-o Dpkg::Options::="--force-confdef" \
 		-o Dpkg::Options::="--force-confold" \
 		$@
+}
 
 install lxc debootstrap
 for n in $(seq 1 $1); do
