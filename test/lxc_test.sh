@@ -22,3 +22,8 @@ sudo ip a
 sudo ip r
 sudo iptables -L
 sudo iptables -t nat -L
+sudo brctl show
+
+for n in $(seq 1 $1); do
+	sudo lxc-execute -n vm$n -- ping -c 5 google.com
+done
