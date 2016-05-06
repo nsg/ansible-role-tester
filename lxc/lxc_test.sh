@@ -17,11 +17,11 @@ install() {
 
 ansiblecfg() {
 	message "Setup ansible.cfg"
-	echo "[defaults]"             >  ansible.cfg
-	echo "roles_path = ../"       >> ansible.cfg
-	echo "host_key_checking=True" >> ansible.cfg
-	echo "[ssh_connection]"       >> ansible.cfg
-	echo "scp_if_ssh=True"        >> ansible.cfg
+	echo "[defaults]"              >  ansible.cfg
+	echo "roles_path = ../"        >> ansible.cfg
+	echo "host_key_checking=False" >> ansible.cfg
+	echo "[ssh_connection]"        >> ansible.cfg
+	echo "scp_if_ssh=True"         >> ansible.cfg
 }
 
 install_ansible() {
