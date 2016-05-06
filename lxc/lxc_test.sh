@@ -96,7 +96,7 @@ make_containers() {
 	done
 }
 
-install lxc debootstrap
+install lxc debootstrap sshpass
 install_ansible
 ansiblecfg
 > inventory.ini
