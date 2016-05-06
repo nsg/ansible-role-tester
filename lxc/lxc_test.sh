@@ -80,6 +80,7 @@ run_tests() {
 }
 
 make_containers() {
+	message "Make LXC container based on $2"
 	for n in $(seq 1 $1); do
 		sudo lxc-create \
 			-n vm$n \
