@@ -2,5 +2,6 @@
 
 sudo: required
 dist: trusty
+language: python
 script:
-  - ./test/lxc_test.sh 2 "debian -- -r jessie"
+  - ./lxc/lxc_test.sh 2 "debian -- -r jessie"
