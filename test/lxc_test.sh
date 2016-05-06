@@ -11,10 +11,14 @@ install() {
 install lxc debootstrap
 for n in $(seq 1 $1); do
 	sudo lxc-create \
-		-t $2 \
-		-n vm$n
+		-n vm$n \
+		-t $2
 	sudo lxc-start -d \
 		-n vm$n
 done
 
 sudo lxc-ls
+sudo ip a
+sudo ip r
+sudo iptables -L
+sudo iptables -t nat -L
