@@ -16,23 +16,19 @@ ansiblecfg() {
 }
 
 install lxc debootstrap
+> inventory.ini
 for n in $(seq 1 $1); do
 	sudo lxc-create \
 		-n vm$n \
 		-t $2
 	sudo lxc-start -d \
 		-n vm$n
+	echo -n "vm$n ansible_user=root ansible_ssh_pass=root ansible_ssh_host=" >> inventory.ini
+	sudo lxc-info \
+		-n vm$n -i \
+		| awk '{ print $NF }' \
+		>> inventory.ini
 done
 
-sudo lxc-ls
-sudo ip a
-sudo ip r
-sudo iptables -L
-sudo iptables -t nat -L
-sudo brctl show
-
-sleep 8
-
-for n in $(seq 1 $1); do
-	sudo lxc-info -n vm$n
-done
+cat inventory.ini
+cat ansible.cfg
