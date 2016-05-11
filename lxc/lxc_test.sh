@@ -85,21 +85,15 @@ run_tests() {
 make_containers() {
 	message "Make LXC container based on $2"
 	for n in $(seq 1 $1); do
-		sudo lxc-create \
-			-n vm$n \
-			-t $2
+		sudo lxc-create -n vm$n -t $2
 		mkdir -p /var/lib/lxc/vm$n/rootfs/root/.ssh
 		chmod 700 /var/lib/lxc/vm$n/rootfs/root/.ssh
 		cat test_keys.pub > /var/lib/lxc/vm$n/rootfs/root/.ssh/authorized_keys
 		chmod 600 /var/lib/lxc/vm$n/rootfs/root/.ssh/authorized_keys
-		sudo lxc-start -d \
-			-n vm$n
+		sudo lxc-start -d -n vm$n
 		sleep 5
-		echo -n "vm$n ansible_user=root ansible_ssh_pass=root ansible_ssh_host=" >> inventory.ini
-		sudo lxc-info \
-			-n vm$n -i \
-			| awk '{ print $NF }' \
-			>> inventory.ini
+		echo -n "vm$n ansible_user=root ansible_ssh_host=" >> inventory.ini
+		sudo lxc-info -n vm$n -i | awk '{ print $NF }' >> inventory.ini
 	done
 }
 
