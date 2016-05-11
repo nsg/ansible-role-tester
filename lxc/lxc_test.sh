@@ -94,6 +94,8 @@ make_containers() {
 		sleep 5
 		echo -n "vm$n ansible_user=root ansible_ssh_host=" >> inventory.ini
 		sudo lxc-info -n vm$n -i | awk '{ print $NF }' >> inventory.ini
+
+		cat /var/lib/lxc/vm$n/config
 	done
 }
 
@@ -103,6 +105,8 @@ install_ansible
 ansiblecfg
 > inventory.ini
 make_containers $1 "$2"
+sudo brctl show
+ip a
 
 cat inventory.ini
 cat ansible.cfg
