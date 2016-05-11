@@ -48,7 +48,6 @@ run_tests() {
 
 	message "Run pre steps | run pre.yml"
 	[ -f tests/pre.yml ] && ansible-playbook \
-		--private-key=vagrant \
 		-i inventory.ini \
 		-u root \
 		$EXTRA_PARAMS \
@@ -56,7 +55,6 @@ run_tests() {
 
 	message "Run the tests | run main.yml"
 	ansible-playbook \
-		--private-key=vagrant \
 		-i inventory.ini \
 		-u root \
 		-vvvv \
@@ -65,7 +63,6 @@ run_tests() {
 
 	message "Test for role idempotence | run main.yml"
 	ansible-playbook \
-		--private-key=vagrant \
 		-i inventory.ini \
 		-u root \
 		$EXTRA_PARAMS \
@@ -74,7 +71,6 @@ run_tests() {
 
 	message "Run post steps | run post.yml"
 	[ -f tests/post.yml ] && ansible-playbook \
-		--private-key=vagrant \
 		-i inventory.ini \
 		-u root \
 		$EXTRA_PARAMS \
