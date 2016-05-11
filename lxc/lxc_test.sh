@@ -41,6 +41,7 @@ run_tests() {
 
 	message "Check syntax"
 	ansible-playbook \
+		--private-key=test_keys \
 		-i inventory.ini \
 		--syntax-check \
 		$EXTRA_PARAMS \
@@ -48,6 +49,7 @@ run_tests() {
 
 	message "Run pre steps | run pre.yml"
 	[ -f tests/pre.yml ] && ansible-playbook \
+		--private-key=test_keys \
 		-i inventory.ini \
 		-u root \
 		$EXTRA_PARAMS \
@@ -55,6 +57,7 @@ run_tests() {
 
 	message "Run the tests | run main.yml"
 	ansible-playbook \
+		--private-key=test_keys \
 		-i inventory.ini \
 		-u root \
 		-vvvv \
@@ -63,6 +66,7 @@ run_tests() {
 
 	message "Test for role idempotence | run main.yml"
 	ansible-playbook \
+		--private-key=test_keys \
 		-i inventory.ini \
 		-u root \
 		$EXTRA_PARAMS \
@@ -71,6 +75,7 @@ run_tests() {
 
 	message "Run post steps | run post.yml"
 	[ -f tests/post.yml ] && ansible-playbook \
+		--private-key=test_keys \
 		-i inventory.ini \
 		-u root \
 		$EXTRA_PARAMS \
@@ -91,9 +96,14 @@ make_containers() {
 			-n vm$n -i \
 			| awk '{ print $NF }' \
 			>> inventory.ini
+		mkdir -p /var/lib/lxc/vm$n/rootfs/root/.ssh
+		chmod 700 /var/lib/lxc/vm$n/rootfs/root/.ssh
+		cat test_keys.pub > /var/lib/lxc/vm$n/rootfs/root/.ssh/authorized_keys
+		chmod 600 /var/lib/lxc/vm$n/rootfs/root/.ssh/authorized_keys
 	done
 }
 
+ssh-keygen -f test_keys
 install lxc debootstrap sshpass
 install_ansible
 ansiblecfg
