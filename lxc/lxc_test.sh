@@ -59,6 +59,7 @@ run_tests() {
 		--private-key=vagrant \
 		-i inventory.ini \
 		-u root \
+		-vvvv \
 		$EXTRA_PARAMS \
 		tests/main.yml
 
