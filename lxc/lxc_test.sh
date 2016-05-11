@@ -103,7 +103,7 @@ make_containers() {
 	done
 }
 
-ssh-keygen -f test_keys
+ssh-keygen -f test_keys -N ""
 install lxc debootstrap sshpass
 install_ansible
 ansiblecfg
