@@ -88,6 +88,10 @@ make_containers() {
 		sudo lxc-create \
 			-n vm$n \
 			-t $2
+		mkdir -p /var/lib/lxc/vm$n/rootfs/root/.ssh
+		chmod 700 /var/lib/lxc/vm$n/rootfs/root/.ssh
+		cat test_keys.pub > /var/lib/lxc/vm$n/rootfs/root/.ssh/authorized_keys
+		chmod 600 /var/lib/lxc/vm$n/rootfs/root/.ssh/authorized_keys
 		sudo lxc-start -d \
 			-n vm$n
 		sleep 5
@@ -96,10 +100,6 @@ make_containers() {
 			-n vm$n -i \
 			| awk '{ print $NF }' \
 			>> inventory.ini
-		mkdir -p /var/lib/lxc/vm$n/rootfs/root/.ssh
-		chmod 700 /var/lib/lxc/vm$n/rootfs/root/.ssh
-		cat test_keys.pub > /var/lib/lxc/vm$n/rootfs/root/.ssh/authorized_keys
-		chmod 600 /var/lib/lxc/vm$n/rootfs/root/.ssh/authorized_keys
 	done
 }
 
