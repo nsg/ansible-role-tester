@@ -67,6 +67,7 @@ run_tests() {
 		-i inventory.ini \
 		-u root \
 		-vvvv \
+		-c paramiko \
 		$EXTRA_PARAMS \
 		tests/main.yml
 
