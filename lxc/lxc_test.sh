@@ -51,12 +51,14 @@ run_tests() {
 		tests/main.yml
 
 	message "Run pre steps | run pre.yml"
-	[ -f tests/pre.yml ] && ansible-playbook \
-		--private-key=test_keys \
-		-i inventory.ini \
-		-u root \
-		$EXTRA_PARAMS \
-		tests/pre.yml
+	if [ -f tests/pre.yml ]; then
+		ansible-playbook \
+			--private-key=test_keys \
+			-i inventory.ini \
+			-u root \
+			$EXTRA_PARAMS \
+			tests/pre.yml
+	fi
 
 	message "Run the tests | run main.yml"
 	ansible-playbook \
@@ -77,12 +79,14 @@ run_tests() {
 	grep 'changed=0.*failed=0' out.log
 
 	message "Run post steps | run post.yml"
-	[ -f tests/post.yml ] && ansible-playbook \
-		--private-key=test_keys \
-		-i inventory.ini \
-		-u root \
-		$EXTRA_PARAMS \
-		tests/post.yml
+	if [ -f tests/post.yml ]; then
+		ansible-playbook \
+			--private-key=test_keys \
+			-i inventory.ini \
+			-u root \
+			$EXTRA_PARAMS \
+			tests/post.yml
+	fi
 }
 
 make_containers() {
