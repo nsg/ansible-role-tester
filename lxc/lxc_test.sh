@@ -95,7 +95,7 @@ make_containers() {
 		sudo lxc-start -d -n vm$n
 		if [[ "$2" == debian* ]]; then
 			sudo chroot /var/lib/lxc/vm$n/rootfs \
-				apt-get -y install python python-simplejson
+				apt-get -y --force-yes install python python-simplejson
 		fi
 		sleep 10 # wait for container to start
 		echo -n "vm$n ansible_user=root ansible_ssh_host=" >> inventory.ini
