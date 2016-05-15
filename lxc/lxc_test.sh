@@ -92,11 +92,11 @@ make_containers() {
 		sudo chmod 700 /var/lib/lxc/vm$n/rootfs/root/.ssh
 		sudo cp test_keys.pub /var/lib/lxc/vm$n/rootfs/root/.ssh/authorized_keys
 		sudo chmod 600 /var/lib/lxc/vm$n/rootfs/root/.ssh/authorized_keys
-		sudo lxc-start -d -n vm$n
 		if [[ "$2" == debian* ]]; then
 			sudo chroot /var/lib/lxc/vm$n/rootfs \
 				apt-get -y --force-yes install python python-simplejson
 		fi
+		sudo lxc-start -d -n vm$n
 		sleep 10 # wait for container to start
 		echo -n "vm$n ansible_user=root ansible_ssh_host=" >> inventory.ini
 		sudo lxc-info -n vm$n -i | awk '{ print $NF }' >> inventory.ini
