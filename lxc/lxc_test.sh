@@ -102,7 +102,7 @@ make_containers() {
 
 patch_lxc_install() {
 	message "Update to latest LXC PPA"
-	sudo add-apt-repository ppa:ubuntu-lxc/lxc-stable
+	sudo add-apt-repository -y ppa:ubuntu-lxc/lxc-stable
 	sudo apt-get -y update
 }
 
