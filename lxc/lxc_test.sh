@@ -63,6 +63,7 @@ run_tests() {
 		--private-key=test_keys \
 		-i inventory.ini \
 		-u root \
+		-vvvv \
 		$EXTRA_PARAMS \
 		tests/main.yml
 
@@ -92,7 +93,7 @@ make_containers() {
 		sudo chmod 700 /var/lib/lxc/vm$n/rootfs/root/.ssh
 		sudo cp test_keys.pub /var/lib/lxc/vm$n/rootfs/root/.ssh/authorized_keys
 		sudo chmod 600 /var/lib/lxc/vm$n/rootfs/root/.ssh/authorized_keys
-		if [[ "$2" == debian* ]]; then
+		if [[ "$2" == debian* ]] || [[ "$2" == ubuntu* ]]; then
 			sudo chroot /var/lib/lxc/vm$n/rootfs \
 				apt-get -y --force-yes install python python-simplejson
 		fi
@@ -117,6 +118,8 @@ ansiblecfg
 > inventory.ini
 make_containers $1 "$2"
 cat inventory.ini
+
+set -x
 run_tests
 
 exit 0
