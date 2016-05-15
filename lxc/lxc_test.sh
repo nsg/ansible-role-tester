@@ -103,7 +103,11 @@ make_containers() {
 				apt-get -y --force-yes install python python-simplejson
 		fi
 		sudo lxc-start -d -n vm$n
-		sleep 10 # wait for container to start
+		echo "Wait for container to start 30 "
+		sleep 10; echo -n "20 "
+		sleep 10; echo -n "10 "
+		sleep 5; echo -n "5 "
+		echo 0
 		echo -n "vm$n ansible_user=root ansible_ssh_host=" >> inventory.ini
 		sudo lxc-info -n vm$n -i | awk '{ print $NF }' >> inventory.ini
 	done
