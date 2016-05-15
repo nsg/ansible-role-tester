@@ -6,8 +6,8 @@ language: python
 matrix:
   include:
     - env: TEMPLATE="ubuntu -- -r trusty --packages=python,python-simplejson"
-    - env: TEMPLATE="debian -- -r 7 --packages=python,python-simplejson"
-    - env: TEMPLATE="debian -- -r 8 --packages=python,python-simplejson"
+    - env: TEMPLATE="debian -- -r wheezy --packages=python,python-simplejson"
+    - env: TEMPLATE="debian -- -r jessie --packages=python,python-simplejson"
     - env: TEMPLATE="centos -- -R 6"
     - env: TEMPLATE="centos -- -R 7"
 script:

@@ -1,5 +1,6 @@
 #!/bin/bash
 
+set -x
 set -e
 set -o pipefail
 
@@ -106,7 +107,7 @@ patch_lxc_install() {
 }
 
 [ -f test_keys ] || ssh-keygen -f test_keys -N ""
-install lxc debootstrap sshpass
+install lxc debootstrap sshpass yum
 install_ansible
 ansiblecfg
 > inventory.ini
