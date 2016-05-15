@@ -1,5 +1,8 @@
 #!/bin/bash
 
+set -e
+set -o pipefail
+
 message() {
 	echo -e "\n###"
 	echo -e "# $@"
@@ -96,11 +99,18 @@ make_containers() {
 	done
 }
 
+patch_lxc_install() {
+	message "Download a newer version of the $1 template"
+	sudo wget -O /usr/share/lxc/templates/lxc-${1} \
+		https://raw.githubusercontent.com/lxc/lxc/master/templates/lxc-${1}.in
+}
+
 [ -f test_keys ] || ssh-keygen -f test_keys -N ""
 install lxc debootstrap sshpass
 install_ansible
 ansiblecfg
 > inventory.ini
+patch_lxc_install $(echo $2 | awk '{ print $1 }')
 make_containers $1 "$2"
 run_tests
 

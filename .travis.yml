@@ -6,10 +6,9 @@ language: python
 matrix:
   include:
     - env: TEMPLATE="ubuntu -- -r trusty --packages=python,python-simplejson"
-    - env: TEMPLATE="ubuntu -- -r xenial --packages=python,python-simplejson"
     - env: TEMPLATE="debian -- -r 7 --packages=python,python-simplejson"
     - env: TEMPLATE="debian -- -r 8 --packages=python,python-simplejson"
-    - env: TEMPLATE="centos -- -r 6"
-    - env: TEMPLATE="centos -- -r 7"
+    - env: TEMPLATE="centos -- -R 6"
+    - env: TEMPLATE="centos -- -R 7"
 script:
   - ./lxc/lxc_test.sh 3 "$TEMPLATE"

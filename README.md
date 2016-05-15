@@ -35,6 +35,7 @@ This is a good place for tests that verifies that the install was successful, ch
 
 ## Order of execution
 
+* main.yml (check syntax)
 * pre.yml
 * main.yml
 * main.yml (verify idempotence, this must cause 0 changes)
