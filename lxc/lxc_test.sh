@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set +x
+
 message() {
 	echo -e "\n###"
 	echo -e "# $@"
@@ -60,7 +62,6 @@ run_tests() {
 		--private-key=test_keys \
 		-i inventory.ini \
 		-u root \
-		-vvvv \
 		$EXTRA_PARAMS \
 		tests/main.yml
 
