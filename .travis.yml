@@ -5,3 +5,4 @@ dist: trusty
 language: python
 script:
   - ./lxc/lxc_test.sh 2 "ubuntu -- -r trusty --packages=python,python-simplejson"
+  - ./lxc/lxc_test.sh 1 "centos -- -r 7"
