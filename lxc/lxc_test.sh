@@ -1,6 +1,5 @@
 #!/bin/bash
 
-set -x
 set -e
 set -o pipefail
 
@@ -113,6 +112,7 @@ install_ansible
 ansiblecfg
 > inventory.ini
 make_containers $1 "$2"
+cat inventory.ini
 run_tests
 
 exit 0
