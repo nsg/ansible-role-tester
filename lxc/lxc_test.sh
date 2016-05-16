@@ -129,7 +129,12 @@ ansiblecfg
 make_containers $1 "$2"
 cat inventory.ini
 
-yes | ssh -vvv -l root $(cat inventory.ini | head -1 | awk -F= '{print $NF}')
+ssh \
+  -vvv \
+  -l root \
+  -o StrictHostKeyChecking=no \
+  -o 'IdentityFile="test_keys"' \
+  $(cat inventory.ini | head -1 | awk -F= '{print $NF}')
 
 set -x
 run_tests
