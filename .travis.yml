@@ -11,4 +11,4 @@ matrix:
   #    - env: TEMPLATE="centos -- -R 6"
     - env: TEMPLATE="centos -- -R 7"
 script:
-  - ./lxc/lxc_test.sh 3 "$TEMPLATE"
+  - ./lxc/lxc_test.sh 3 "$TEMPLATE" 1.9.6
