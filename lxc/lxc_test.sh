@@ -113,12 +113,12 @@ patch_lxc_install() {
 patch_lxc_install
 install lxc debootstrap sshpass yum
 install_ansible
-ansiblecfg
-> inventory.ini
-make_containers $1 "$2"
-cat inventory.ini
+#ansiblecfg
+#> inventory.ini
+#make_containers $1 "$2"
+#cat inventory.ini
 
-ansible-playbook -i inventory.ini -u root --private-key=test_keys tests/main.yml
+pip search ansible
 
 run_tests
 
