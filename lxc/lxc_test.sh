@@ -104,7 +104,7 @@ make_containers() {
 				apt-get -y --force-yes install python python-simplejson
 		fi
 		sudo lxc-start -d -n vm$n
-		echo "Wait for container to start 30 "
+		echo -n "Wait for container to start 30 "
 		sleep 10; echo -n "20 "
 		sleep 10; echo -n "10 "
 		sleep 5; echo -n "5 "
@@ -128,6 +128,8 @@ ansiblecfg
 > inventory.ini
 make_containers $1 "$2"
 cat inventory.ini
+
+ssh -vvv -l root $(cat inventory.ini | head -1 | awk -F= '{print $NF}')
 
 set -x
 run_tests
