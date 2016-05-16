@@ -5,10 +5,10 @@ dist: trusty
 language: python
 matrix:
   include:
-    - env: TEMPLATE="ubuntu -- -r trusty"
-    - env: TEMPLATE="debian -- -r wheezy"
-    - env: TEMPLATE="debian -- -r jessie"
-    - env: TEMPLATE="centos -- -R 6"
+  #    - env: TEMPLATE="ubuntu -- -r trusty"
+  #    - env: TEMPLATE="debian -- -r wheezy"
+  #    - env: TEMPLATE="debian -- -r jessie"
+  #    - env: TEMPLATE="centos -- -R 6"
     - env: TEMPLATE="centos -- -R 7"
 script:
   - ./lxc/lxc_test.sh 3 "$TEMPLATE"
