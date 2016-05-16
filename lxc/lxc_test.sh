@@ -118,15 +118,7 @@ ansiblecfg
 make_containers $1 "$2"
 cat inventory.ini
 
-ssh \
-  -vvv \
-  -l root \
-  -o StrictHostKeyChecking=no \
-  -o 'IdentityFile="test_keys"' \
-  -tt \
-  $(cat inventory.ini | head -1 | awk -F= '{print $NF}') \
-  ls /
-
+ansible-playbook -i inventory.ini -u root --private-key=test_keys tests/main.yml
 
 run_tests
 
