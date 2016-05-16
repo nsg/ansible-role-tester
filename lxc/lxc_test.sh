@@ -39,16 +39,11 @@ run_tests() {
 		exit 1
 	fi
 
-	if [ $VERBOSE_TESTS ]; then
-		EXTRA_PARAMS=" -vvv"
-	fi
-
 	message "Check syntax"
 	ansible-playbook \
 		--private-key=test_keys \
 		-i inventory.ini \
 		--syntax-check \
-		$EXTRA_PARAMS \
 		tests/main.yml
 
 	message "Run pre steps | run pre.yml"
@@ -57,7 +52,6 @@ run_tests() {
 			--private-key=test_keys \
 			-i inventory.ini \
 			-u root \
-			$EXTRA_PARAMS \
 			tests/pre.yml
 	fi
 
@@ -66,9 +60,6 @@ run_tests() {
 		--private-key=test_keys \
 		-i inventory.ini \
 		-u root \
-		-vvvv \
-		-c paramiko \
-		$EXTRA_PARAMS \
 		tests/main.yml
 
 	message "Test for role idempotence | run main.yml"
@@ -76,7 +67,6 @@ run_tests() {
 		--private-key=test_keys \
 		-i inventory.ini \
 		-u root \
-		$EXTRA_PARAMS \
 		tests/main.yml | tee out.log
 	grep 'changed=0.*failed=0' out.log
 
@@ -86,7 +76,6 @@ run_tests() {
 			--private-key=test_keys \
 			-i inventory.ini \
 			-u root \
-			$EXTRA_PARAMS \
 			tests/post.yml
 	fi
 }
@@ -128,8 +117,6 @@ ansiblecfg
 > inventory.ini
 make_containers $1 "$2"
 cat inventory.ini
-
-ansible-playbook -i inventory.ini -u root --private-key=test_keys tests/main.yml
 
 set -x
 run_tests
