@@ -29,8 +29,8 @@ ansiblecfg() {
 }
 
 install_ansible() {
-	message "Install Ansible"
-	type ansible || pip install ansible
+	message "Install Ansible $1"
+	type ansible || pip install "ansible==$1"
 }
 
 run_tests() {
@@ -112,13 +112,17 @@ patch_lxc_install() {
 [ -f test_keys ] || ssh-keygen -f test_keys -N ""
 patch_lxc_install
 install lxc debootstrap sshpass yum
-install_ansible
-#ansiblecfg
-#> inventory.ini
-#make_containers $1 "$2"
-#cat inventory.ini
 
-pip search ansible
+if [ -z $3 ]; then
+  install_ansible "2.0.0.2"
+else
+  install_ansible "$3"
+fi
+
+ansiblecfg
+> inventory.ini
+make_containers $1 "$2"
+cat inventory.ini
 
 run_tests
 
