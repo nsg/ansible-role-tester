@@ -118,7 +118,6 @@ ansiblecfg
 make_containers $1 "$2"
 cat inventory.ini
 
-set -x
 run_tests
 
 exit 0
