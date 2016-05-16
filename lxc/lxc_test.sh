@@ -129,7 +129,7 @@ ansiblecfg
 make_containers $1 "$2"
 cat inventory.ini
 
-ssh -vvv -l root $(cat inventory.ini | head -1 | awk -F= '{print $NF}')
+yes | ssh -vvv -l root $(cat inventory.ini | head -1 | awk -F= '{print $NF}')
 
 set -x
 run_tests
