@@ -134,7 +134,9 @@ ssh \
   -l root \
   -o StrictHostKeyChecking=no \
   -o 'IdentityFile="test_keys"' \
-  $(cat inventory.ini | head -1 | awk -F= '{print $NF}')
+  -tt \
+  $(cat inventory.ini | head -1 | awk -F= '{print $NF}') \
+  ls /
 
 set -x
 run_tests
