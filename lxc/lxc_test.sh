@@ -20,12 +20,13 @@ install() {
 
 ansiblecfg() {
 	message "Setup ansible.cfg"
-	echo "[defaults]"              >  ansible.cfg
-	echo "roles_path = ../"        >> ansible.cfg
-	echo "remote_tmp = /tmp"       >> ansible.cfg
-	echo "host_key_checking=False" >> ansible.cfg
-	echo "[ssh_connection]"        >> ansible.cfg
-	echo "scp_if_ssh=True"         >> ansible.cfg
+	echo "[defaults]"                     >  ansible.cfg
+	echo "roles_path = ../"               >> ansible.cfg
+	echo "remote_tmp = /tmp"              >> ansible.cfg
+	echo "host_key_checking=False"        >> ansible.cfg
+	echo "[ssh_connection]"               >> ansible.cfg
+	echo "scp_if_ssh=True"                >> ansible.cfg
+	echo "ssh_args = -o ControlMaster=no -o StrictHostKeyChecking=no -o KbdInteractiveAuthentication=no -o PasswordAuthentication=no" >> ansible.cfg
 }
 
 install_ansible() {
@@ -51,7 +52,7 @@ run_tests() {
 		ansible-playbook \
 			--private-key=test_keys \
 			-i inventory.ini \
-			-u root \
+			-u root -vvv \
 			tests/pre.yml
 	fi
 
@@ -59,14 +60,14 @@ run_tests() {
 	ansible-playbook \
 		--private-key=test_keys \
 		-i inventory.ini \
-		-u root \
+		-u root -vvv \
 		tests/main.yml
 
 	message "Test for role idempotence | run main.yml"
 	ansible-playbook \
 		--private-key=test_keys \
 		-i inventory.ini \
-		-u root \
+		-u root -vvv \
 		tests/main.yml | tee out.log
 	grep 'changed=0.*failed=0' out.log
 
@@ -75,7 +76,7 @@ run_tests() {
 		ansible-playbook \
 			--private-key=test_keys \
 			-i inventory.ini \
-			-u root \
+			-u root -vvv \
 			tests/post.yml
 	fi
 }
@@ -92,6 +93,7 @@ make_containers() {
 			sudo chroot /var/lib/lxc/vm$n/rootfs \
 				apt-get -y --force-yes install python python-simplejson
 		fi
+        sudo chroot /var/lib/lxc/vm$n/rootfs usermod --password ! root
 		sudo lxc-start -d -n vm$n
 		echo -n "Wait for container to start 30 "
 		sleep 10; echo -n "20 "
