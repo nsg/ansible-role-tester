@@ -21,6 +21,7 @@ ansiblecfg() {
 	cat <<- EOF > ansible.cfg
 		[defaults]
 		roles_path = ../
+		host_key_checking = False
 		[ssh_connection]
 		scp_if_ssh=True
 	EOF

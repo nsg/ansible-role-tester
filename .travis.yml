@@ -3,10 +3,6 @@
 sudo: required
 dist: trusty
 
-env:
-  global:
-    - ANSIBLE_HOST_KEY_CHECKING=False
-
 install:
   - ./test.sh install
 
