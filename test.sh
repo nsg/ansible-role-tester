@@ -204,6 +204,7 @@ setup_containers() {
 			sudo lxc exec $name -- yum install -y openssh-server || :
 			sudo lxc exec $name -- apt-get install -y openssh-server || :
 			sudo lxc exec $name -- apt-get install -y python || :
+			sudo lxc exec $name -- dnf install -y python || :
 			sudo lxc exec $name -- mkdir -p /root/.ssh
 			sudo lxc exec $name -- chmod 700 /root/.ssh
 			sudo lxc file push --uid=0 --gid=0 --mode=0400 \
