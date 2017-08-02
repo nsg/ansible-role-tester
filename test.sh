@@ -142,8 +142,12 @@ platforms() {
 		fi
 
 		for v in $versions; do
-		  echo -n images:
-		  find_image_name $dist $v
+			echo -n images:
+			if [[ $v == "all" ]]; then
+				find_image_name $dist
+			else
+				find_image_name $dist $v
+			fi
 		done
 	done
 }
