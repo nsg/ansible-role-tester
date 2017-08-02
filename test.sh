@@ -155,8 +155,7 @@ platforms() {
 find_image_name() {
 	sudo lxc image list images: \
 		| grep x86_64 \
-		| grep -i $1 \
-		| grep -i $2 \
+		| grep -i "$1/$2" \
 		| head -1 \
 		| tr -d '|' \
 		| awk '{print $1}'
