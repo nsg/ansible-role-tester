@@ -230,7 +230,15 @@ restore_containers() {
 		sudo lxc stop -f $name 2> /dev/null || :
 		sudo lxc restore $name ${name}-snap
 		sudo lxc start $name
+		c=0
 		while ! sudo lxc list | grep $name | grep -q eth0; do
+			c=$(( $c + 1 ))
+			if [ $(( $c % 60 )) ]; then
+				message "Time out, try again"
+				sudo lxc list
+				sudo lxc stop -f $name 2> /dev/null || :
+				sudo lxc start $name
+			fi
 			sleep 1
 		done
 	done
