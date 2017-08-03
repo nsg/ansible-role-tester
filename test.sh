@@ -290,11 +290,11 @@ if [[ $1 == install ]]; then
 else
 	message "Start Ansible Role Tester ($0): Test mode";
 	message "meta/main.yml tells us that Ansible $(min_ansible_version) or newer is supported."
-	message "Generate inventory.ini"; inventoryini; cat inventory.ini
 
 	for ver in $(ansible_versions_to_test_with); do
 		message "Test with Ansible version $ver"
 		restore_containers
+		message "Generate inventory.ini"; inventoryini; cat inventory.ini
 		ansible_version $ver
 		step pre
 		step main
