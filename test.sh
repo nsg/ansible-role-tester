@@ -226,11 +226,9 @@ setup_containers() {
 restore_containers() {
 	for c in $(platforms); do
 		name=$(echo $c | tr A-Z a-z | sed -e 's/[^a-z0-9]/-/g')
-		message "Stop container $name"
-		sudo lxc stop -f $name || :
 		message "Restore container $name"
+		sudo lxc stop -f $name || :
 		sudo lxc restore $name ${name}-snap
-		message "Start container $name"
 		sudo lxc start $name
 		while ! sudo lxc list | grep $name | grep -q eth0; do
 			sleep 1
