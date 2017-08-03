@@ -283,7 +283,7 @@ if [[ $1 == install ]]; then
 	message "Install packages"; prep_packages
 	message "Generate ssh keys"; gensshkeys
 	message "Start containers"; setup_containers
-	message "Running containers"; sudo lxc list
+	message "Containers"; sudo lxc list
 
 	for ver in $(ansible_versions_to_test_with); do
 		message "Install Ansible version $ver"
