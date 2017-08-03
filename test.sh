@@ -282,7 +282,7 @@ if [[ $1 == install ]]; then
 	message "Start Ansible Role Tester ($0): Install mode"; ansiblecfg
 	message "Install packages"; prep_packages
 	message "Generate ssh keys"; gensshkeys
-	message "Start containers"; setup_containers
+	message "Setup containers"; setup_containers
 	message "Containers"; sudo lxc list
 
 	for ver in $(ansible_versions_to_test_with); do
