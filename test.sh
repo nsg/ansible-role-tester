@@ -200,6 +200,7 @@ setup_containers() {
 			while ! sudo lxc list | grep $name | grep -q eth0; do
 				sleep 1
 			done
+			message "Install packages and ssh keys for container $name"
 			sudo lxc exec $name -- dnf install -y openssh-server || :
 			sudo lxc exec $name -- yum install -y openssh-server || :
 			sudo lxc exec $name -- apt-get install -y openssh-server || :
@@ -209,11 +210,31 @@ setup_containers() {
 			sudo lxc exec $name -- chmod 700 /root/.ssh
 			sudo lxc file push --uid=0 --gid=0 --mode=0400 \
 				ssh-key.pub $name/root/.ssh/authorized_keys
-			sudo lxc exec $name -- service sshd start || :
-			sudo lxc exec $name -- service ssh start || :
+			sudo lxc exec $name -- chkconfig sshd on || :
+			sudo lxc stop $name
+			sudo lxc snapshot $name ${name}-snap
 		else
 			message "Container $name already running"
 		fi
+	done
+}
+
+#
+# This step will stop, restore from snapshot, start containers
+#
+
+restore_containers() {
+	for c in $(platforms); do
+		name=$(echo $c | tr A-Z a-z | sed -e 's/[^a-z0-9]/-/g')
+		message "Stop container $name"
+		sudo lxc stop -f $name || :
+		message "Restore container $name"
+		sudo lxc restore $name ${name}-snap
+		message "Start container $name"
+		sudo lxc start $name
+		while ! sudo lxc list | grep $name | grep -q eth0; do
+			sleep 1
+		done
 	done
 }
 
@@ -275,6 +296,7 @@ else
 
 	for ver in $(ansible_versions_to_test_with); do
 		message "Test with Ansible version $ver"
+		restore_containers
 		ansible_version $ver
 		step pre
 		step main
