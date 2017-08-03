@@ -227,7 +227,7 @@ restore_containers() {
 	for c in $(platforms); do
 		name=$(echo $c | tr A-Z a-z | sed -e 's/[^a-z0-9]/-/g')
 		message "Restore container $name"
-		sudo lxc stop -f $name || :
+		sudo lxc stop -f $name 2> /dev/null || :
 		sudo lxc restore $name ${name}-snap
 		sudo lxc start $name
 		while ! sudo lxc list | grep $name | grep -q eth0; do
