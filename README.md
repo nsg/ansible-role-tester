@@ -26,8 +26,9 @@ The actual tests are then run by executing `./test.sh test`.
 
 The install step installes the containers so with the following configuration:
 
-    - CONTAINER_IMAGES="images:centos/7"
-    - ANSIBLE_VERSIONS="2.1.6 latest"
+    env:
+      - CONTAINER_IMAGES="images:centos/7"
+      - ANSIBLE_VERSIONS="2.1.6 latest"
 
 The execusion order is:
 
@@ -37,11 +38,14 @@ The execusion order is:
 
 The first test run has probably changed the state of the container with makes the 2nd test less useful. This maxtrix build will not have this problem:
 
-    - CONTAINER_IMAGES="images:centos/7"
-    - ANSIBLE_VERSIONS="2.1.6"
-    - ANSIBLE_VERSIONS="latest"
+    env:
+      global:
+        - CONTAINER_IMAGES="images:centos/7"
+      matrix:
+        - ANSIBLE_VERSIONS="2.1.6"
+        - ANSIBLE_VERSIONS="latest"
 
-You can also specify multiple versions of CONTAINER_IMAGES if you like. The syntax for the images are images:$DIST/$VERSION, for Ubuntu ubuntu:$VERSION also works.
+You can also specify multiple versions of CONTAINER_IMAGES if you like to test with different dists. The syntax for the images are images:$DIST/$VERSION, for Ubuntu ubuntu:$VERSION also works.
 
 ## Example
 
@@ -53,12 +57,12 @@ You can also specify multiple versions of CONTAINER_IMAGES if you like. The synt
     dist: trusty
 
     env:
-      - CONTAINER_IMAGES="images:centos/7" ANSIBLE_VERSIONS="2.1.6.0"
-      - CONTAINER_IMAGES="images:centos/7" ANSIBLE_VERSIONS="2.2.3.0"
-      - CONTAINER_IMAGES="images:centos/7" ANSIBLE_VERSIONS="latest"
-      - CONTAINER_IMAGES="ubuntu:16.04" ANSIBLE_VERSIONS="2.1.6.0"
-      - CONTAINER_IMAGES="ubuntu:16.04" ANSIBLE_VERSIONS="2.2.3.0"
-      - CONTAINER_IMAGES="ubuntu:16.04" ANSIBLE_VERSIONS="latest"
+      global:
+        - CONTAINER_IMAGES="images:centos/7 ubuntu:16.04"
+      matrix:
+        - ANSIBLE_VERSIONS="2.1.6.0"
+        - ANSIBLE_VERSIONS="2.2.3.0"
+        - ANSIBLE_VERSIONS="latest"
 
     install:
       - ./test.sh install
