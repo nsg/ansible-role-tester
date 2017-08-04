@@ -3,3 +3,8 @@
 - hosts: all
   tasks:
     - debug:
+
+    - name: Change a thing...
+      file:
+        path: /opt
+        mode: 0777

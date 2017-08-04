@@ -200,6 +200,7 @@ setup_containers() {
 			while ! sudo lxc list | grep $name | grep -q eth0; do
 				sleep 1
 			done
+			message "Install packages and ssh keys for container $name"
 			sudo lxc exec $name -- dnf install -y openssh-server || :
 			sudo lxc exec $name -- yum install -y openssh-server || :
 			sudo lxc exec $name -- apt-get install -y openssh-server || :
@@ -209,11 +210,37 @@ setup_containers() {
 			sudo lxc exec $name -- chmod 700 /root/.ssh
 			sudo lxc file push --uid=0 --gid=0 --mode=0400 \
 				ssh-key.pub $name/root/.ssh/authorized_keys
-			sudo lxc exec $name -- service sshd start || :
-			sudo lxc exec $name -- service ssh start || :
+			sudo lxc exec $name -- chkconfig sshd on || :
+			sudo lxc stop $name
+			sudo lxc snapshot $name ${name}-snap
 		else
 			message "Container $name already running"
 		fi
+	done
+}
+
+#
+# This step will stop, restore from snapshot, start containers
+#
+
+restore_containers() {
+	for c in $(platforms); do
+		name=$(echo $c | tr A-Z a-z | sed -e 's/[^a-z0-9]/-/g')
+		message "Restore container $name"
+		sudo lxc stop -f $name 2> /dev/null || :
+		sudo lxc restore $name ${name}-snap
+		sudo lxc start $name
+		c=0
+		while ! sudo lxc list | grep $name | grep -q eth0; do
+			c=$(( $c + 1 ))
+			if [ $(( $c % 60 )) ]; then
+				message "Time out, try again"
+				sudo lxc list
+				sudo lxc stop -f $name 2> /dev/null || :
+				sudo lxc start $name
+			fi
+			sleep 1
+		done
 	done
 }
 
@@ -261,8 +288,8 @@ if [[ $1 == install ]]; then
 	message "Start Ansible Role Tester ($0): Install mode"; ansiblecfg
 	message "Install packages"; prep_packages
 	message "Generate ssh keys"; gensshkeys
-	message "Start containers"; setup_containers
-	message "Running containers"; sudo lxc list
+	message "Setup containers"; setup_containers
+	message "Containers"; sudo lxc list
 
 	for ver in $(ansible_versions_to_test_with); do
 		message "Install Ansible version $ver"
@@ -271,10 +298,11 @@ if [[ $1 == install ]]; then
 else
 	message "Start Ansible Role Tester ($0): Test mode";
 	message "meta/main.yml tells us that Ansible $(min_ansible_version) or newer is supported."
-	message "Generate inventory.ini"; inventoryini; cat inventory.ini
 
 	for ver in $(ansible_versions_to_test_with); do
 		message "Test with Ansible version $ver"
+		restore_containers
+		message "Generate inventory.ini"; inventoryini; cat inventory.ini
 		ansible_version $ver
 		step pre
 		step main
