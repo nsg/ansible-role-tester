@@ -53,11 +53,12 @@ You can also specify multiple versions of CONTAINER_IMAGES if you like. The synt
     dist: trusty
 
     env:
-      - CONTAINER_IMAGES="images:centos/7"
-      - CONTAINER_IMAGES="ubuntu:16.04"
-      - ANSIBLE_VERSIONS="2.1.6.0"
-      - ANSIBLE_VERSIONS="2.2.3.0"
-      - ANSIBLE_VERSIONS="latest"
+      - CONTAINER_IMAGES="images:centos/7" ANSIBLE_VERSIONS="2.1.6.0"
+      - CONTAINER_IMAGES="images:centos/7" ANSIBLE_VERSIONS="2.2.3.0"
+      - CONTAINER_IMAGES="images:centos/7" ANSIBLE_VERSIONS="latest"
+      - CONTAINER_IMAGES="ubuntu:16.04" ANSIBLE_VERSIONS="2.1.6.0"
+      - CONTAINER_IMAGES="ubuntu:16.04" ANSIBLE_VERSIONS="2.2.3.0"
+      - CONTAINER_IMAGES="ubuntu:16.04" ANSIBLE_VERSIONS="latest"
 
     install:
       - ./test.sh install
