@@ -97,7 +97,7 @@ setup_container() {
 	if ! sudo lxc list | grep -q $name; then
 		message "Setup $name with image $image_name"
 		sudo lxc launch $image_name $name
-		while ! sudo lxc list | grep $name | grep -q eth0; do
+		while ! sudo lxc list -c 4 $name | grep -q eth0; do
 			sleep 1
 		done
 		message "Install packages and ssh keys for container $name"
