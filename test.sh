@@ -141,13 +141,13 @@ gensshkeys() {
 step() {
 	if [ -f tests/$1.yml ]; then
 		message "Syntax check step $1"
-		ansible-playbook \
+		ansible-playbook $RUN_EXTRA_VARS_LIST \
 			-i inventory.ini \
 			--syntax-check \
 			tests/$1.yml
 
 		message "Run play in step $1"
-		ansible-playbook \
+		ansible-playbook $RUN_EXTRA_VARS_LIST \
 			-i inventory.ini \
 			--private-key=ssh-key \
 			-u root \
@@ -165,6 +165,15 @@ fi
 if [[ -z $ANSIBLE_VERSIONS ]]; then
 	message "ANSIBLE_VERSIONS environment not set"
 	exit 1
+fi
+
+if [[ -n $ANSIBLE_EXTRA_VARS_LIST ]]; then
+	message "ANSIBLE_EXTRA_VARS_LIST is set, I will add these params to all plays:"
+	RUN_EXTRA_VARS_LIST=""
+	for e in $(echo $ANSIBLE_EXTRA_VARS_LIST | tr ':' ' '); do
+		RUN_EXTRA_VARS_LIST="${RUN_EXTRA_VARS_LIST} -e $e "
+	done
+	echo "$RUN_EXTRA_VARS_LIST"
 fi
 
 if [[ $1 == install ]]; then
