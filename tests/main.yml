@@ -8,3 +8,6 @@
       file:
         path: /opt
         mode: 0777
+
+    - name: Print extra vars
+      debug: var=foo
