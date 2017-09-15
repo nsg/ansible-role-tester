@@ -167,6 +167,14 @@ if [[ -z $ANSIBLE_VERSIONS ]]; then
 	exit 1
 fi
 
+if [[ -n $ANSIBLE_EXTRA_VARS_LIST ]]; then
+	message "ANSIBLE_EXTRA_VARS_LIST is set, I will add these params to all plays:"
+	for e in $(echo $ANSIBLE_EXTRA_VARS_LIST | tr ':' ' '); do
+		echo -n "-e $e"
+	done
+	echo
+fi
+
 if [[ $1 == install ]]; then
 	message "Start Ansible Role Tester: Install mode"; ansiblecfg
 	message "Install packages"; prep_packages
