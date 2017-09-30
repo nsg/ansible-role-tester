@@ -9,6 +9,13 @@ message() {
 }
 
 #
+# Retry a step a few times
+#
+retry_step() {
+  $@ || ($@ || $@)
+}
+
+#
 # Write a ansible.cfg config file for our build
 # If there already is an ansible.cfg, backup it
 #
@@ -96,7 +103,7 @@ setup_container() {
 	name=$(echo $image_name | tr A-Z a-z | sed -e 's/[^a-z0-9]/-/g')
 	if ! sudo lxc list | grep -q $name; then
 		message "Setup $name with image $image_name"
-		travis_retry sudo lxc launch $image_name $name
+		retry_step sudo lxc launch $image_name $name
 		while ! sudo lxc list -c 4 $name | grep -q eth0; do
 			sleep 1
 		done
