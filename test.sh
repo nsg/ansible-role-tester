@@ -58,9 +58,8 @@ install_pip() {
 #
 
 prep_packages() {
-	sudo add-apt-repository -y ppa:ubuntu-lxc/lxd-stable
 	sudo apt-get -qq update
-	install_package lxd
+	sudo apt-get install -y -t trusty-backports lxd lxd-client
 	sudo lxd init --auto --storage-backend=dir || :
 	sudo lxc network create testbr0
 	sudo lxc network attach-profile testbr0 default eth0
