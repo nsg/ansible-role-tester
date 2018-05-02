@@ -59,7 +59,13 @@ install_pip() {
 
 prep_packages() {
 	sudo apt-get -qq update
-	sudo apt-get install -y -t trusty-backports lxd lxd-client
+	install_package snapd
+	sudo snap install lxd
+	while [ ! -S /var/snap/lxd/common/lxd/unix.socket ]; do
+		echo "Waiting for LXD socket...";
+		sleep 1;
+	done;
+	export PATH=$PATH:/snap/bin
 	sudo lxd init --auto --storage-backend=dir || :
 	sudo lxc network create testbr0
 	sudo lxc network attach-profile testbr0 default eth0
@@ -162,6 +168,8 @@ step() {
 		message "Skipping step $1"
 	fi
 }
+
+export PATH=$PATH:/snap/bin
 
 if [[ -z $CONTAINER_IMAGES ]]; then
 	message "CONTAINER_IMAGES environment not set"
