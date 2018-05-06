@@ -5,7 +5,7 @@ dist: trusty
 
 env:
   global:
-    - CONTAINER_IMAGES="images:centos/7 ubuntu:16.04"
+    - CONTAINER_IMAGES="images:centos/7 images:debian/jessie images:debian/stretch ubuntu:14.04 ubuntu:16.04 ubuntu:18.04"
     - ANSIBLE_EXTRA_VARS_LIST="foo=foovalue:bar=baz"
   matrix:
     - ANSIBLE_VERSIONS="2.1.6.0"
