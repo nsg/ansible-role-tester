@@ -5,12 +5,15 @@ dist: trusty
 
 env:
   global:
-    - CONTAINER_IMAGES="images:centos/7 images:debian/jessie images:debian/stretch ubuntu:14.04 ubuntu:16.04 ubuntu:18.04"
+    - ANSIBLE_VERSIONS="latest"
     - ANSIBLE_EXTRA_VARS_LIST="foo=foovalue:bar=baz"
   matrix:
-    - ANSIBLE_VERSIONS="2.1.6.0"
-    - ANSIBLE_VERSIONS="2.2.3.0"
-    - ANSIBLE_VERSIONS="latest"
+    - CONTAINER_IMAGES="images:centos/7"
+    - CONTAINER_IMAGES="images:debian/jessie"
+    - CONTAINER_IMAGES="images:debian/stretch"
+    - CONTAINER_IMAGES="ubuntu:14.04"
+    - CONTAINER_IMAGES="ubuntu:16.04"
+    - CONTAINER_IMAGES="ubuntu:18.04"
 
 install:
   - ./test.sh install

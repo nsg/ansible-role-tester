@@ -8,6 +8,17 @@ message() {
 	echo -e "\e[33m# $@\e[0m"
 }
 
+fold() {
+  local state="$1"; shift
+  local name="$@"
+
+  if [ x$state == xstart ]; then
+    echo "travis_fold:start:$name"
+  else
+    echo "travis_fold:end:$name"
+  fi
+}
+
 #
 # Retry a step a few times
 #
@@ -58,6 +69,7 @@ install_pip() {
 #
 
 prep_packages() {
+	fold start install_snapd_and_lxd
 	sudo apt-get -qq update
 	install_package snapd
 	sudo snap install lxd
@@ -69,13 +81,16 @@ prep_packages() {
 	sudo lxd init --auto --storage-backend=dir || :
 	sudo lxc network create testbr0
 	sudo lxc network attach-profile testbr0 default eth0
+	fold end install_snapd_and_lxd
 
+	fold start install_ansible_deps
 	install_package python-dev
 	install_package python-virtualenv
 	install_package libssl-dev
 	install_package libffi-dev
 	install_package gcc
 	install_pip pyyaml
+	fold end install_ansible_deps
 }
 
 #
@@ -85,6 +100,7 @@ prep_packages() {
 
 ansible_version() {
 	if [ ! -e .env_$1 ]; then
+		fold start ansible_env_$1
 		message "Setup a virtualenv for Ansible $1"
 		virtualenv .env_$1
 		. .env_$1/bin/activate
@@ -93,9 +109,25 @@ ansible_version() {
 		else
 			pip install ansible==$1
 		fi
+		fold end ansible_env_$1
 	else
 		. .env_$1/bin/activate
 	fi
+}
+
+#
+# Run a LXC command at a running container
+#
+at_lxc() {
+  local fold="$1"; shift
+  local name="$1"; shift
+  local cmd="$@"
+  local slug="$(echo $cmd | sed 's/[^a-z0-9]/_/g')"
+
+  [ x$fold == xfold ] && fold start $slug
+  message $name - $cmd
+  sudo lxc exec $name -- $cmd
+  [ x$fold == xfold ] && fold end $slug
 }
 
 #
@@ -112,21 +144,52 @@ setup_container() {
 		while ! sudo lxc list -c 4 $name | grep -q eth0; do
 			sleep 1
 		done
-		message "Install packages and ssh keys for container $name"
-		sudo lxc exec $name -- dnf install -y openssh-server || :
-		sudo lxc exec $name -- yum install -y openssh-server || :
-		sudo lxc exec $name -- apt-get install -y openssh-server || :
-		sudo lxc exec $name -- apt-get install -y python || :
-		sudo lxc exec $name -- dnf install -y python || :
-		sudo lxc exec $name -- mkdir -p /root/.ssh
-		sudo lxc exec $name -- chmod 700 /root/.ssh
-		sudo lxc file push --uid=0 --gid=0 --mode=0400 \
-			ssh-key.pub $name/root/.ssh/authorized_keys
-		sudo lxc exec $name -- service sshd start || :
-		sudo lxc exec $name -- service ssh start || :
+
+		message "Push script $0 to container $name"
+		sudo lxc file push --uid=0 --gid=0 --mode=0755 $0 $name/root/test.sh
+
+		if [[ $name == *debian* ]] || [[ $name == ubuntu* ]]; then
+			at_lxc fold $name apt update
+			at_lxc fold $name apt -y upgrade
+		elif [[ $name == *centos* ]]; then
+			at_lxc fold $name yum -y update
+		fi
+
+		message "Prepare the container $name"
+		at_lxc fold $name /root/test.sh container
+
+		message "Push ssh-key.pub to authorized_keys"
+		sudo lxc file push --uid=0 --gid=0 --mode=0600 ssh-key.pub $name/root/.ssh/authorized_keys
 	else
 		message "Container $name already running"
 	fi
+}
+
+#
+# Install and prep container
+#
+prep_container() {
+	# This is exectued _inside_ the container
+
+	mkdir -p /root/.ssh
+	chmod 700 /root/.ssh
+
+	if grep -q '14.04' /etc/lsb-release; then
+		apt-get install -y --no-install-recommends openssh-server python
+	elif test -f /etc/debian_version; then
+		apt-get install -y --no-install-recommends openssh-server python
+		systemctl start ssh
+	elif hostnamectl status | grep -q CentOS; then
+		yum install -y openssh-server
+		systemctl start sshd
+	elif hostnamectl status | grep -q Fedora; then
+		dnf install -y openssh-server python
+		systemctl start sshd
+	else
+		hostnamectl status
+	fi
+
+	echo "Container prep complete"
 }
 
 #
@@ -143,7 +206,9 @@ inventoryini() {
 # Generate local ssh keys
 #
 gensshkeys() {
+	fold start gen-ssh-keys
 	ssh-keygen -N "" -f ssh-key
+	fold end gen-ssh-keys
 }
 
 #
@@ -168,6 +233,12 @@ step() {
 		message "Skipping step $1"
 	fi
 }
+
+# This step is only executed _inside_ the containers
+if [[ $1 == container ]]; then
+	prep_container
+	exit 0
+fi
 
 export PATH=$PATH:/snap/bin
 
