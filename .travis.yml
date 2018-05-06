@@ -9,7 +9,7 @@ env:
     - ANSIBLE_EXTRA_VARS_LIST="foo=foovalue:bar=baz"
   matrix:
     - CONTAINER_IMAGES="images:centos/7"
-    # - CONTAINER_IMAGES="images:debian/jessie"
+    - CONTAINER_IMAGES="images:debian/jessie"
     - CONTAINER_IMAGES="images:debian/stretch"
     - CONTAINER_IMAGES="ubuntu:14.04"
     - CONTAINER_IMAGES="ubuntu:16.04"
