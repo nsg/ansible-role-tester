@@ -148,13 +148,6 @@ setup_container() {
 		message "Push script $0 to container $name"
 		sudo lxc file push --uid=0 --gid=0 --mode=0755 $0 $name/root/test.sh
 
-		if [[ $name == *debian* ]] || [[ $name == ubuntu* ]]; then
-			at_lxc fold $name apt update
-			at_lxc fold $name apt -y upgrade
-		elif [[ $name == *centos* ]]; then
-			at_lxc fold $name yum -y update
-		fi
-
 		message "Prepare the container $name"
 		at_lxc fold $name /root/test.sh container
 
@@ -177,6 +170,10 @@ prep_container() {
 	if grep -q '14.04' /etc/lsb-release; then
 		apt-get install -y --no-install-recommends openssh-server python
 	elif test -f /etc/debian_version; then
+		if grep -qE '^8' /etc/debian_version; then
+			# Workaround for "Could not enumerate links: Connection timed out"
+			systemctl stop systemd-networkd
+		fi
 		apt-get install -y --no-install-recommends openssh-server python
 		systemctl start ssh
 	elif hostnamectl status | grep -q CentOS; then
