@@ -79,8 +79,8 @@ prep_packages() {
 	done;
 	export PATH=$PATH:/snap/bin
 	sudo lxd init --auto --storage-backend=dir || :
-	sudo lxc network create testbr0
-	sudo lxc network attach-profile testbr0 default eth0
+	#sudo lxc network create testbr0
+	#sudo lxc network attach-profile testbr0 default eth0
 	fold end install_snapd_and_lxd
 
 	fold start install_ansible_deps
