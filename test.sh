@@ -126,7 +126,7 @@ at_lxc() {
 
   [ x$fold == xfold ] && fold start $slug
   message $name - $cmd
-  sudo lxc exec $name -- $cmd
+  $SUDOCMD lxc exec $name -- $cmd
   [ x$fold == xfold ] && fold end $slug
 }
 
@@ -137,22 +137,22 @@ at_lxc() {
 setup_container() {
 	local image_name=$1
 
-	name=$(echo $image_name | tr A-Z a-z | sed -e 's/[^a-z0-9]/-/g')
-	if ! sudo lxc list | grep -q $name; then
+	name=art-$(echo $image_name | tr A-Z a-z | sed -e 's/[^a-z0-9]/-/g')
+	if ! $SUDOCMD lxc list | grep -q $name; then
 		message "Setup $name with image $image_name"
-		retry_step sudo lxc launch $image_name $name
-		while ! sudo lxc list -c 4 $name | grep -q eth0; do
+		retry_step $SUDOCMD lxc launch $image_name $name
+		while ! $SUDOCMD lxc list -c 4 $name | grep -q eth0; do
 			sleep 1
 		done
 
 		message "Push script $0 to container $name"
-		sudo lxc file push --uid=0 --gid=0 --mode=0755 $0 $name/root/test.sh
+		$SUDOCMD lxc file push --uid=0 --gid=0 --mode=0755 $0 $name/root/test.sh
 
 		message "Prepare the container $name"
 		at_lxc fold $name /root/test.sh container
 
 		message "Push ssh-key.pub to authorized_keys"
-		sudo lxc file push --uid=0 --gid=0 --mode=0600 ssh-key.pub $name/root/.ssh/authorized_keys
+		$SUDOCMD lxc file push --uid=0 --gid=0 --mode=0600 ssh-key.pub $name/root/.ssh/authorized_keys
 	else
 		message "Container $name already running"
 	fi
@@ -194,7 +194,7 @@ prep_container() {
 #
 
 inventoryini() {
-	sudo lxc list \
+	$SUDOCMD lxc list | grep ' art-' \
 	  | awk '/RUNNING/{ print $2" ansible_host="$6" ansible_ssh_host="$6 }' \
 	  > inventory.ini
 }
@@ -258,16 +258,23 @@ if [[ -n $ANSIBLE_EXTRA_VARS_LIST ]]; then
 	echo "$RUN_EXTRA_VARS_LIST"
 fi
 
-if [[ $1 == install ]]; then
+if [[ $1 == install ]] || [[ $1 == local ]]; then
 	message "Start Ansible Role Tester: Install mode"; ansiblecfg
-	message "Install packages"; prep_packages
+
+	if [[ $1 == install ]]; then
+		message "Install packages"; prep_packages
+		SUDOCMD="sudo"
+	else
+		SUDOCMD=""
+	fi
+
 	message "Generate ssh keys"; gensshkeys
 
 	message "Setup containers";
 	for c in $CONTAINER_IMAGES; do
 		setup_container $c
 	done
-	message "Containers"; sudo lxc list
+	message "Containers"; $SUDOCMD lxc list
 
 	for ver in $ANSIBLE_VERSIONS; do
 		message "Install Ansible version $ver (in background)"
