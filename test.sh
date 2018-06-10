@@ -176,7 +176,7 @@ prep_container() {
 		fi
 		apt-get install -y --no-install-recommends openssh-server python
 		systemctl start ssh
-	elif hostnamectl status | grep -q CentOS; then
+	elif grep -q 'CentOS' /etc/redhat-release; then
 		yum install -y openssh-server
 		systemctl start sshd
 	elif hostnamectl status | grep -q Fedora; then
