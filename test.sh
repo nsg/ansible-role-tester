@@ -204,6 +204,7 @@ inventoryini() {
 #
 gensshkeys() {
 	fold start gen-ssh-keys
+	rm -rf ssh-key
 	ssh-keygen -N "" -f ssh-key
 	fold end gen-ssh-keys
 }
